@@ -12,13 +12,19 @@ namespace Typing.Models
     {
         private string _word;
         public string Word { get => _word; }
-        private bool _isTrue;
-        public bool isTrue { get { return _isTrue; } set { _isTrue = value;  OnPropertyChanged(); OnPropertyChanged("Color"); } }
-        public string Color { get => isTrue ? "Green" : "Red"; }
+        private bool _isTrue = false;
+        public bool isTrue { get { return _isTrue; } set { _isTrue = value;  OnPropertyChanged(); _color = isTrue ? "Green" : "Red"; OnPropertyChanged("Color");} }
+        private string _color;
+        public string Color { get => _color; }
         public Text(string word)
         {
             _word = word;
-            isTrue = false;
+            _color = "White";
+        }
+
+        public void CheckValidWord(string wordA)
+        {
+            isTrue = wordA == _word;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
