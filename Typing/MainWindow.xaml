@@ -18,10 +18,27 @@
         </Grid.ColumnDefinitions>
         <Border Background="White" BorderThickness="1" Width="150" Height="200" VerticalAlignment="Top" Margin="0 30 0 0" BorderBrush="#FFABADB3">
             <StackPanel>
-                <TextBlock Text="55 WPM"/>
-                <TextBlock Text="Accuracy"/>
-                <TextBlock Text="Correct words"/>
-                <TextBlock Text="Wrong words"/>
+                <Border>
+                    <TextBlock Text="{Binding StringFormat={}{0} WRM, Path=Result.WPM}" HorizontalAlignment="Center"/>
+                </Border>
+                <Border>
+                    <DockPanel>
+                        <TextBlock Text="Accuracy"/>
+                        <TextBlock Text="{Binding StringFormat={}{0}%, Path=Result.Accuracy}" HorizontalAlignment="Right"/>
+                    </DockPanel>
+                </Border>
+                <Border>
+                    <DockPanel>
+                        <TextBlock Text="Correct words"/>
+                        <TextBlock Text="{Binding Result.CorrectWords}" HorizontalAlignment="Right"/>
+                    </DockPanel>
+                </Border>
+                <Border>
+                    <DockPanel>
+                        <TextBlock Text="Wrong words"/>
+                        <TextBlock Text="{Binding Result.WrongWords}" HorizontalAlignment="Right"/>
+                    </DockPanel>
+                </Border>
             </StackPanel>
         </Border>
         <StackPanel Grid.Column="1">

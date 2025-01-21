@@ -27,7 +27,7 @@ namespace Typing.Models
         }
         public void SetAccuracy()
         {
-            _accuracy = _correctWords / _wpm;
+            _accuracy = Math.Round((double)_correctWords / _wpm * 100, 2);
         }
     }
 }

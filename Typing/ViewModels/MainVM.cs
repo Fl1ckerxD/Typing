@@ -21,6 +21,7 @@ namespace Typing.ViewModels
         public string Timer { get => _time; set { _time = value; OnPropertyChanged(); } }
         private int x = 60;
         public ICommand RestartCommand { get; }
+        public Result Result { get; } = new Result();
         public MainVM()
         {
             Refresh();
@@ -35,6 +36,8 @@ namespace Typing.ViewModels
                 {
                     Words[_k++].CheckValidWord(value.Trim());
                     Texted = "";
+                    Result.CalculateResult(Words[_k-1].isTrue);
+                    OnPropertyChanged("Result");
                     if (!_timer.IsEnabled)
                     {
                         TimerStart();
