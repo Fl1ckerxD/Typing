@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -11,70 +12,72 @@ namespace Typing.ViewModels
 {
     internal class MainVM : INotifyPropertyChanged
     {
-        private string _text;
-        public string Texted { get => _text; set { _text = value; OnPropertyChanged(); CheckInputText(value); } }
+        public Result Result { get; set; }
+        private CountdownTimer _countdownTimer;
         private ObservableCollection<Text> _words;
         public ObservableCollection<Text> Words { get => _words; }
-        private int _k = 0;
-        private DispatcherTimer _timer = null;
-        private string _time;
-        public string Timer { get => _time; set { _time = value; OnPropertyChanged(); } }
-        private int x = 60;
+        private string _inputText;
+        public string InputText { get => _inputText; set { _inputText = value; OnPropertyChanged(); CheckInputText(value); } }
+        private string _currentTime;
+        public string CurrentTime { get => _currentTime; set { _currentTime = value; OnPropertyChanged(); } }
+        private int _index = 0;
         public ICommand RestartCommand { get; }
-        public Result Result { get; } = new Result();
         public MainVM()
         {
+            _countdownTimer = new(60);
+            _countdownTimer.TimeChanged += OnTimeChanged;
+            _countdownTimer.TimeElapsed += OnTimeElapsed;
+
             Refresh();
-            _timer = new DispatcherTimer();
-            Timer = "1:00";
-            RestartCommand = new RelayCommand(obj => { Refresh(); TimerStop(); });
+            CurrentTime = "1:00";
+            RestartCommand = new RelayCommand(obj => { Refresh(); _countdownTimer.Reset(60); });
         }
         private void CheckInputText(string value)
         {
-            if (value.Length != 0 && _k < Words.Count)
+            if (value.Length != 0 && _index < Words.Count)
                 if (value[^1] == ' ')
                 {
-                    Words[_k++].CheckValidWord(value.Trim());
-                    Texted = "";
-                    Result.CalculateResult(Words[_k-1].isTrue);
+                    Words[_index++].CheckValidWord(value.Trim());
+                    InputText = "";
+                    Result.CalculateResult(Words[_index - 1].isTrue);
                     OnPropertyChanged("Result");
-                    if (!_timer.IsEnabled)
+                    if (!_countdownTimer.IsRunning)
                     {
-                        TimerStart();
+                        _countdownTimer.TimerStart();
                     }
                 }
         }
         private void Refresh()
         {
             _words = new ObservableCollection<Text>();
+            Result = new Result();
             OnPropertyChanged("Words");
-            _k = 0;
-            Texted = "";
-            string txt = "программисту этот паттерн позволяет менять отдельные части приложения не затрагивая другие также он может заниматься только одним компонентом вообще не представляя как работают остальные хотя для полного понимания своей работы нужно разбираться во всех аспектах написания приложений";
-            foreach (string word in txt.Split())
-                _words.Add(new Text(word));
+            _index = 0;
+            InputText = "";
+            GetWords();
         }
-        private void TimerStop()
+        private void GetWords()
         {
-            _timer.Stop();
-            x = 60;
-            Timer = x.ToString();
-        }
-        private void TimerStart()
-        {
-            _timer.Tick += new EventHandler(TimerTick);
-            _timer.Interval = new TimeSpan(0, 0, 1);
-            _timer.Start();
-        }
-        private void TimerTick(object sender, EventArgs e)
-        {
-            x--;
-            Timer = x.ToString();
-            if (x == 0)
+            using (StreamReader reader = new StreamReader("Words.txt"))
             {
-                _timer.Stop();
+                Random random = new Random();
+                string[] words = reader.ReadToEnd().Split();
+                for (int i = 0; i < 20; i++)
+                {
+                    int r = random.Next(0, words.Length - 1);
+                    _words.Add(new Text(words[r]));
+                }
             }
         }
+        private void OnTimeChanged(int remainingTime)
+        {
+            CurrentTime = remainingTime.ToString();
+        }
+        private void OnTimeElapsed()
+        {
+            MessageBox.Show("Время истекло");
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
