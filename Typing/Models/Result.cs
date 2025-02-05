@@ -18,22 +18,23 @@ namespace Typing.Models
         public int CorrectWords { get => _correctWords; }
         private int _wrongWords;
         public int WrongWords { get => _wrongWords; }
-        private int _chars;
+        private int _chars = 0;
         public int Chars { get => _chars; }
 
-        public void CalculateResult(bool correct)
+        public void CalculateResult(Text word)
         {
-            if (correct) _correctWords++; else _wrongWords++;
+            if (word.isTrue) _correctWords++; else _wrongWords++;
+            _chars += word.Word.Length;
             SetWPM();
             SetAccuracy();
         }
         public void SetAccuracy()
         {
-            _accuracy = Math.Round((double)_correctWords / _wpm * 100, 2);
+            _accuracy = Math.Round((double)_correctWords / (_correctWords + _wrongWords) * 100, 2);
         }
         public void SetWPM()
         {
-            _wpm = _chars / 5;
+            _wpm = _correctWords + _wrongWords;
         }
     }
 }
