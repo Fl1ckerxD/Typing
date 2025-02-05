@@ -30,6 +30,7 @@ namespace Typing.ViewModels
             _countdownTimer.TimeChanged += OnTimeChanged;
             _countdownTimer.TimeElapsed += OnTimeElapsed;
 
+            GetScores();
             Refresh();
             RestartCommand = new RelayCommand(obj => { _countdownTimer.Reset(60); Refresh(); });
         }
@@ -68,7 +69,7 @@ namespace Typing.ViewModels
         private void GetWords()
         {
             Words = new ObservableCollection<Text>();
-            using (StreamReader reader = new StreamReader("Words.txt"))
+            using (StreamReader reader = new StreamReader("data/Words.txt"))
             {
                 Random random = new Random();
                 string[] words = reader.ReadToEnd().Split();
@@ -87,8 +88,22 @@ namespace Typing.ViewModels
         {
             MessageBox.Show("Время истекло");
             IsActive = Visibility.Visible;
+            SaveScore();
         }
-
+        private void SaveScore()
+        {
+            Score score = new()
+            {
+                WPM = Result.WPM,
+                Accuracy = Result.Accuracy,
+                Date = DateTimeOffset.Now
+            };
+            JSONReader.Serialize(score);
+        }
+        private void GetScores()
+        {
+            JSONReader.Deserialize();
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
