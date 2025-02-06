@@ -4,22 +4,28 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Typing.ViewModels"
+        xmlns:con="clr-namespace:Typing.Converter"
         mc:Ignorable="d"
-        Title="Тест на скорость набора текста" MinWidth="900" MinHeight="315" Height="450" Width="800" Background="#add5ff">
+        Title="Тест на скорость набора текста" Height="450" Width="800" Background="#add5ff">
     <Window.DataContext>
         <vm:MainVM/>
     </Window.DataContext>
 
-    <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
+    <Window.Resources>
+        <con:RowIndexConverter x:Key="RowIndexConverter"/>
+        <con:DateConverter x:Key="DateConverter"/>
+    </Window.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" >
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="1.5*"/>
+                <ColumnDefinition MinWidth="250"/>
+                <ColumnDefinition MinWidth="170" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <Border CornerRadius="15" Background="White" BorderThickness="1" Width="250" VerticalAlignment="Top"
-                Margin="0 30 0 0" BorderBrush="#FFABADB3" Visibility="{Binding IsActive}">
+            <Border CornerRadius="15" BorderThickness="1" Width="250" VerticalAlignment="Top"
+                Margin="0 30 0 0" Visibility="{Binding IsActive}">
                 <StackPanel>
                     <Border CornerRadius="15 15 0 0" Background="#5e91b3" VerticalAlignment="Top" Height="20">
                         <TextBlock Text="Результат" FontSize="15" Margin=" 10 0 0 0" Foreground="White" FontWeight="DemiBold"/>
@@ -48,7 +54,7 @@
                             <TextBlock Text="{Binding Result.CorrectWords}" Foreground="Green" FontWeight="DemiBold" HorizontalAlignment="Right"/>
                         </DockPanel>
                     </Border>
-                    <Border BorderThickness="0 1 0 0" BorderBrush="Gray">
+                    <Border BorderThickness="0 1 0 0" Background="Transparent" BorderBrush="Gray">
                         <DockPanel Margin="5 5 5 5">
                             <TextBlock Text="Неверные слова"/>
                             <TextBlock Text="{Binding Result.WrongWords}" Foreground="Red" FontWeight="DemiBold" HorizontalAlignment="Right"/>
@@ -58,10 +64,8 @@
             </Border>
 
             <StackPanel Grid.Column="1">
-                <Border Background="White" BorderThickness="1" BorderBrush="#FFABADB3" CornerRadius="20" Margin="0 30 0 0">
-                    <ListView ItemsSource="{Binding Words}" Background="Transparent" BorderThickness="0" 
-                          ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                          ScrollViewer.VerticalScrollBarVisibility="Disabled" Margin="0 5 0 5">
+                <Border BorderThickness="1" CornerRadius="20" Margin="0 30 0 0">
+                    <ListView ItemsSource="{Binding Words}" Margin="0 5 0 5">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Border Background="{Binding Color}" CornerRadius="5">
@@ -96,6 +100,21 @@
                     </Grid>
                 </Border>
             </StackPanel>
+
+            <Border Grid.Column="2" CornerRadius="15" BorderThickness="1" Width="320" MaxHeight="550" VerticalAlignment="Top" Margin="0 30 0 0">
+                <DataGrid ItemsSource="{Binding Scores}" Margin="5">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="№" MinWidth="30">
+                            <DataGridTextColumn.Binding>
+                                <Binding RelativeSource="{RelativeSource AncestorType=DataGridRow}" Converter="{StaticResource RowIndexConverter}" />
+                            </DataGridTextColumn.Binding>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="СВМ" MinWidth="50" Binding="{Binding WPM}"/>
+                        <DataGridTextColumn Header="Аккуратность" MinWidth="140" Binding="{Binding StringFormat={}{0}%, Path=Accuracy}"/>
+                        <DataGridTextColumn Header="Дата" Width="*" Binding="{Binding Date, Converter={StaticResource DateConverter}}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
         </Grid>
     </ScrollViewer>
 </Window>

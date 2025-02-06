@@ -6,7 +6,7 @@ namespace Typing.Classes
 {
     internal static class JSONReader
     {
-        private static List<Score> Scores = new();
+        public static List<Score> Scores = new();
         private const string fileName = "data/Scores.json";
         public static void Serialize(Score score)
         {

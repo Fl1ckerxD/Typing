@@ -16,6 +16,8 @@ namespace Typing.ViewModels
         private CountdownTimer _countdownTimer;
         private ObservableCollection<Text> _words;
         public ObservableCollection<Text> Words { get => _words; set { _words = value; OnPropertyChanged(); } }
+        private ObservableCollection<Score> _scores;
+        public ObservableCollection<Score> Scores { get => _scores; set { _scores = value; OnPropertyChanged(); } }
         private string _inputText;
         public string InputText { get => _inputText; set { _inputText = value; OnPropertyChanged(); CheckInputText(value); } }
         private string _currentTime;
@@ -89,6 +91,7 @@ namespace Typing.ViewModels
             MessageBox.Show("Время истекло");
             IsActive = Visibility.Visible;
             SaveScore();
+            Scores = new(JSONReader.Scores);
         }
         private void SaveScore()
         {
@@ -103,6 +106,7 @@ namespace Typing.ViewModels
         private void GetScores()
         {
             JSONReader.Deserialize();
+            Scores = new(JSONReader.Scores);
         }
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
