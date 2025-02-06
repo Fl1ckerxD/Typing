@@ -6,7 +6,7 @@
         xmlns:vm="clr-namespace:Typing.ViewModels"
         xmlns:con="clr-namespace:Typing.Converter"
         mc:Ignorable="d"
-        Title="Тест на скорость набора текста" Height="450" Width="800" Background="#add5ff">
+        Title="Тест на скорость набора текста" Height="720" Width="1280" Background="#add5ff">
     <Window.DataContext>
         <vm:MainVM/>
     </Window.DataContext>
@@ -14,9 +14,10 @@
     <Window.Resources>
         <con:RowIndexConverter x:Key="RowIndexConverter"/>
         <con:DateConverter x:Key="DateConverter"/>
+        <con:DateTimeOffsetToStringConverter x:Key="DateTimeOsConverter"/>
     </Window.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" >
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition MinWidth="250"/>
@@ -65,7 +66,7 @@
 
             <StackPanel Grid.Column="1">
                 <Border BorderThickness="1" CornerRadius="20" Margin="0 30 0 0">
-                    <ListView ItemsSource="{Binding Words}" Margin="0 5 0 5">
+                    <ListView ItemsSource="{Binding Words}" MinHeight="30" Margin="0 5 0 5">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Border Background="{Binding Color}" CornerRadius="5">
@@ -102,16 +103,17 @@
             </StackPanel>
 
             <Border Grid.Column="2" CornerRadius="15" BorderThickness="1" Width="320" MaxHeight="550" VerticalAlignment="Top" Margin="0 30 0 0">
-                <DataGrid ItemsSource="{Binding Scores}" Margin="5">
+                <DataGrid ItemsSource="{Binding Scores}" Margin="5" IsReadOnly="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="№" MinWidth="30">
-                            <DataGridTextColumn.Binding>
-                                <Binding RelativeSource="{RelativeSource AncestorType=DataGridRow}" Converter="{StaticResource RowIndexConverter}" />
-                            </DataGridTextColumn.Binding>
-                        </DataGridTextColumn>
                         <DataGridTextColumn Header="СВМ" MinWidth="50" Binding="{Binding WPM}"/>
                         <DataGridTextColumn Header="Аккуратность" MinWidth="140" Binding="{Binding StringFormat={}{0}%, Path=Accuracy}"/>
-                        <DataGridTextColumn Header="Дата" Width="*" Binding="{Binding Date, Converter={StaticResource DateConverter}}"/>
+                        <DataGridTextColumn Header="Дата" Width="*" Binding="{Binding Date, Converter={StaticResource DateConverter}}">
+                            <DataGridTextColumn.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="ToolTip" Value="{Binding Date, Converter={StaticResource DateTimeOsConverter}}"/>
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                        </DataGridTextColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>

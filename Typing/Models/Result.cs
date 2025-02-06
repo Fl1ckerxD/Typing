@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Typing.Models
+﻿namespace Typing.Models
 {
     internal class Result
     {
@@ -21,6 +13,10 @@ namespace Typing.Models
         private int _chars = 0;
         public int Chars { get => _chars; }
 
+        /// <summary>
+        /// Подсчет результата
+        /// </summary>
+        /// <param name="word"></param>
         public void CalculateResult(Text word)
         {
             if (word.isTrue) _correctWords++; else _wrongWords++;
@@ -28,10 +24,16 @@ namespace Typing.Models
             SetWPM();
             SetAccuracy();
         }
+        /// <summary>
+        /// Высчитывает точность
+        /// </summary>
         public void SetAccuracy()
         {
             _accuracy = Math.Round((double)_correctWords / (_correctWords + _wrongWords) * 100, 2);
         }
+        /// <summary>
+        /// Высчитывает СВМ
+        /// </summary>
         public void SetWPM()
         {
             _wpm = _correctWords + _wrongWords;
